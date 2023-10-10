@@ -1,6 +1,6 @@
 import { google } from "googleapis";
 const {GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY } = process.env;
-import keys from "../keys.json"
+import keys from "../key.json"
 export async function getGoogleSheetsData(range) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -90,9 +90,9 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 async function authorize() {
   console.log("GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL", GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL);
   const client = new google.auth.JWT(
-    keys.client_email,
+    GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
     null,
-    keys.private_key,
+    GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
     ["https://www.googleapis.com/auth/spreadsheets"]
   );
 
