@@ -1,6 +1,6 @@
 import { google } from "googleapis";
-const client_email = process.env.client_email;
-const private_key = process.env.private_key;
+const {GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY } = process.env;
+import keys from "../keys.json"
 export async function getGoogleSheetsData(range) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -88,10 +88,11 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 
 // Helper function to authenticate with Google Sheets API
 async function authorize() {
+  console.log("GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL", GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL);
   const client = new google.auth.JWT(
-    client_email,
+    keys.client_email,
     null,
-    private_key,
+    keys.private_key,
     ["https://www.googleapis.com/auth/spreadsheets"]
   );
 
