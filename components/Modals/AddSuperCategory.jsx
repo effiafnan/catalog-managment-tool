@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { TextField } from "@mui/material";
 import GlobalContext from "../../context/GlobalContext";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = process.env.BASE_URL;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),

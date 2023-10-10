@@ -3,7 +3,7 @@ import DashboardLayout from "../components/Dashboard";
 import { useContext, useEffect } from "react";
 import GlobalContext from "../context/GlobalContext";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = process.env.BASE_URL;
 
 export default function Home({ data }) {
   const { setGlobalCsvState , setGlobalCsvTableData} = useContext(GlobalContext);
