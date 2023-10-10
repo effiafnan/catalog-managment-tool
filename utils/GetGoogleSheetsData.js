@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import keys from "../key.json";
 const client_email = process.env.client_email;
 const private_key = process.env.private_key;
 export async function getGoogleSheetsData(range) {
