@@ -10,7 +10,7 @@ export default function Home() {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `${process.env.BASE_URL}/api/get-global-data`
+        `/api/get-global-data`
       );
       const dataObj = await response.json();
 
