@@ -37,7 +37,7 @@ const columns = [
 ];
 
 export default function DataTable({ filterValue, searchQuery }) {
-  const API_KEY = "https://sheetdb.io/api/v1/819nekvayjt41";
+  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [paginationModel, setPaginationModel] = React.useState({
@@ -65,7 +65,6 @@ export default function DataTable({ filterValue, searchQuery }) {
     fetch(`${API_KEY}/count?sheet=global-csv`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("data sheet count", data);
         setRowCount(data?.rows ?? 0);
       });
   }, []);

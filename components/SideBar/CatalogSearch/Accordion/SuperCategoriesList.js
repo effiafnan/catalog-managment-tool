@@ -8,27 +8,22 @@ import AddSuperCategory from "../../../Modals/AddSuperCategory";
 import SuperCategoriesItem from "./SuperCategoriesItem";
 
 const SuperCategoriesList = ({ superCategories: data, country }) => {
-  const [open, setOpen] = useState(false);
   const superCategories = data ? Object?.keys(data) : [];
 
   return (
-    <>
-      <AddSuperCategory open={open} setOpen={setOpen} country={country} />
-      <ul
-        id="dropdown-example"
-        className={`contents py-2 space-y-2 absolute bg-white dark:bg-gray-800`}
-      >
-        {superCategories.map((category, index) => (
-          <SuperCategoriesItem
-            category={category}
-            key={index}
-            setOpen={setOpen}
-            data={data}
-            country={country}
-          />
-        ))}
-      </ul>
-    </>
+    <ul
+      id="dropdown-example"
+      className={`contents py-2 space-y-2 absolute bg-white dark:bg-gray-800`}
+    >
+      {superCategories.map((category, index) => (
+        <SuperCategoriesItem
+          category={category}
+          key={index}
+          data={data}
+          country={country}
+        />
+      ))}
+    </ul>
   );
 };
 

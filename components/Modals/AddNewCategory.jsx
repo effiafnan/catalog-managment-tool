@@ -20,27 +20,104 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function AddCategory({ open, setOpen, country, superCategory }) {
+  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
   const [selectedSuperCategory, setSuperCategory] = useState("");
   const [category, setCategory] = useState("");
-  const [categoryError, setCategoryError] = useState(false);
+  const [categoryError, setCategoryError] = useState("");
+  const [superCategoryError, setSuperCategoryError] = useState("");
 
   const [categoryUrl, setCategoryUrl] = useState("");
-  const { globalCsvState } = useContext(GlobalContext);
+  const { globalCsvState, setGlobalCsvState } = useContext(GlobalContext);
   const allSuperCategories = globalCsvState[country];
   const superCategories = Object.keys(allSuperCategories) ?? [];
-  // console.log('superCategories', superCategories);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  // useEffect(() => {
-  //   if (superCategories.includes(category)) {
-  //     setCategoryError(true);
-  //   } else {
-  //     setCategoryError(false);
-  //   }
-  // }, [category, superCategories]);
+  useEffect(() => {
+    if (superCategories.includes(selectedSuperCategory)) {
+      setSuperCategoryError("");
+    } else if (!!selectedSuperCategory) {
+      setSuperCategoryError("Does Not Exist");
+    }
+  }, [category, selectedSuperCategory, superCategories]);
+
+  useEffect(() => {
+    setSuperCategoryError("");
+    setCategoryError("");
+  }, [category, selectedSuperCategory]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (categoryError || superCategoryError || !categoryUrl) {
+      setCategoryError("Required");
+      return;
+    }
+    try {
+      const productId = `${country}-${selectedSuperCategory.replace(
+        / /g,
+        "-"
+      )}`;
+      const superCategoryData = globalCsvState[country][selectedSuperCategory];
+      const categoriesArray = Object.keys(superCategoryData).filter(
+        (value) => !!value
+      );
+      if (categoriesArray.length > 0) {
+        //productId will be different so add new row
+        fetch(`${API_KEY}?sheet=global-csv`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            data: [
+              {
+                categoryName: category,
+                categoryNameUrl: categoryUrl,
+                country: country,
+                friendlyProductId: productId,
+                superCategory: selectedSuperCategory,
+              },
+            ],
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            handleClose();
+            const dataObj = globalCsvState;
+            dataObj[country][selectedSuperCategory][category] = [];
+            setGlobalCsvState(dataObj);
+          });
+      } else {
+        fetch(`${API_KEY}/friendlyProductId/${productId}?sheet=global-csv`, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              categoryName: category,
+              categoryNameUrl: categoryUrl,
+            },
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("data added", data);
+            handleClose();
+            const dataObj = globalCsvState;
+            dataObj[country][selectedSuperCategory][category] = [];
+            setGlobalCsvState(dataObj);
+          });
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <BootstrapDialog
@@ -78,8 +155,8 @@ export default function AddCategory({ open, setOpen, country, superCategory }) {
             onChange={(e) => {
               setSuperCategory(e.target.value);
             }}
-            // error={categoryError}
-            // helperText={categoryError ? "Required" : ""}
+            error={!!superCategoryError}
+            helperText={superCategoryError}
           />
           <Autocomplete
             disablePortal
@@ -105,8 +182,8 @@ export default function AddCategory({ open, setOpen, country, superCategory }) {
               onChange={(e) => {
                 setCategory(e.target.value);
               }}
-              error={categoryError}
-              helperText={categoryError ? "Required" : ""}
+              error={!!categoryError}
+              helperText={categoryError}
             />
             <TextField
               placeholder="Category Url"
@@ -132,7 +209,7 @@ export default function AddCategory({ open, setOpen, country, superCategory }) {
           <div className="self-stretch grow shrink basis-0 px-2 py-3 bg-white border border-slate-900 border-opacity-40 justify-start items-start gap-8 inline-flex">
             <div className="text-slate-900 text-md font-bold font-['Open Sans'] leading-normal">
               Super Category name
-              <div className="text-md font-light">{category}</div>
+              <div className="text-md font-light">{selectedSuperCategory}</div>
             </div>
             <div className="text-slate-900 text-md font-bold font-['Open Sans'] leading-normal">
               Category name
@@ -147,9 +224,9 @@ export default function AddCategory({ open, setOpen, country, superCategory }) {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={handleClose}
+          onClick={handleSubmit}
           className=""
-          sx={{ backgroundColor: "#001035" }}
+          sx={{ backgroundColor: "#001035", color: "#fff" }}
         >
           Add Category
         </Button>

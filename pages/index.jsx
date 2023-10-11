@@ -4,7 +4,7 @@ import { useContext, useEffect } from "react";
 import GlobalContext from "../context/GlobalContext";
 
 export default function Home() {
-  const { setGlobalCsvState, setGlobalCsvTableData } =
+  const { setGlobalCsvState } =
     useContext(GlobalContext);
 
   const fetchData = async () => {
@@ -15,12 +15,8 @@ export default function Home() {
       const dataObj = await response.json();
 
       setGlobalCsvState(dataObj?.data?.groupedData);
-      setGlobalCsvTableData(dataObj?.data?.tableData ?? []);
-      console.log("dataObj", dataObj);
-      // return { props: { data: dataObj?.data } };
     } catch (error) {
       console.error("Error fetching data:", error);
-      // return { props: { data: null } };
     }
   };
 
@@ -28,9 +24,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // useEffect(() => {}, [data]);
-
-  console.log("process.env", process.env);
   return (
     <div>
       <Head>
@@ -45,16 +38,3 @@ export default function Home() {
   );
 }
 
-// export async function getServerSideProps() {
-//   try {
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-global-data`
-//     );
-//     const dataObj = await response.json();
-
-//     return { props: { data: dataObj?.data } };
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     return { props: { data: null } };
-//   }
-// }

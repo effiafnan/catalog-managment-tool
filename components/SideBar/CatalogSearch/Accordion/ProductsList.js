@@ -22,12 +22,13 @@ const ProductsList = ({ products = [] }) => {
           <li key={index}>
             <button
               type="button"
-              className="flex space-between items-center w-full p-2 pl-24 text-base text-gray-700 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              title={product}
+              className="flex space-between items-center w-full pl-16 text-base text-gray-700 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               aria-controls="dropdown-example"
               data-collapse-toggle="dropdown-example"
             >
               <span className="flex-1 ml-3 text-left whitespace-nowrap">
-                {product}
+                {product?.length > 18 ? product?.slice(0, 15) + '...' : product}
               </span>
               <IconButton onClick={handleClick}>
                 <MoreHorizIcon />

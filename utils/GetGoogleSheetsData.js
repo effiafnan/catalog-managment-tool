@@ -3,19 +3,12 @@ import { google } from "googleapis";
 export async function getGoogleSheetsData(range) {
   return new Promise(async (resolve, reject) => {
     try {
-      const client = await authorize();
-
-      const gsapi = google.sheets({ version: "v4", auth: client });
-
-      const opt = {
-        spreadsheetId: "1Rb10dJKRNjPeHsWdm4JEZ89Hxh85kr6GH3_VT3tL_kg",
-        range : `${range}!A1:Z250`,
-      };
-
-      const response = await gsapi.spreadsheets.values.get(opt);
-      const data = response.data.values;
-
-      resolve(data);
+      const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo?sheet=global-csv";
+      fetch(API_KEY)
+        .then((response) => response.json())
+        .then((data) => {
+          resolve(data);
+        });
     } catch (error) {
       reject(error);
     }
@@ -30,7 +23,7 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 
       const updateIndexCsv = {
         spreadsheetId: "1Rb10dJKRNjPeHsWdm4JEZ89Hxh85kr6GH3_VT3tL_kg",
-        range: 'index',
+        range: "index",
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         resource: {
@@ -40,7 +33,7 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
       console.log("globalCsvData", globalCsvData);
       const updateGlobalCsv = {
         spreadsheetId: "1Rb10dJKRNjPeHsWdm4JEZ89Hxh85kr6GH3_VT3tL_kg",
-        range: 'global-csv!A:Z',
+        range: "global-csv!A:Z",
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         resource: {
@@ -51,7 +44,7 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
       // const response = await gsapi.spreadsheets.values.append(updateIndexCsv);
       const response2 = await gsapi.spreadsheets.values.append(updateGlobalCsv);
       // const data = response.data;
-      console.log('response2', response2);
+      console.log("response2", response2);
       const data2 = response2.data;
       resolve(data2);
     } catch (error) {
@@ -65,8 +58,6 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 //       const client = await authorize();
 
 //       const gsapi = google.sheets({ version: "v4", auth: client });
-
-
 
 //       const response = await gsapi.spreadsheets.create({
 //         resource: {
@@ -87,16 +78,12 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 
 // Helper function to authenticate with Google Sheets API
 async function authorize() {
-
   const jwkBase64 = process.env.GOOGLE_SERVICE_ACCOUNT;
-  const jwk = JSON.parse(Buffer.from(jwkBase64, 'base64').toString());
+  const jwk = JSON.parse(Buffer.from(jwkBase64, "base64").toString());
 
-  const client = new google.auth.JWT(
-    jwk.client_email,
-    null,
-    jwk.private_key,
-    ["https://www.googleapis.com/auth/spreadsheets"]
-  );
+  const client = new google.auth.JWT(jwk.client_email, null, jwk.private_key, [
+    "https://www.googleapis.com/auth/spreadsheets",
+  ]);
 
   await client.authorize();
 

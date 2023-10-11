@@ -22,7 +22,6 @@ const CatalogSearch = () => {
         options={countries}
         sx={{ width: "auto" }}
         onChange={(_, value) => {
-          console.log("value", value);
           setFilterValue(value);
         }}
         renderInput={(params) => <TextField {...params} label="Search" />}

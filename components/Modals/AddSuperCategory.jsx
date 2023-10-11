@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { TextField } from "@mui/material";
 import GlobalContext from "../../context/GlobalContext";
+import { CreateNewSheet } from "../../utils/CreateNewSheet";
 
 const baseUrl = process.env.BASE_URL;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -21,6 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function AddSuperCategory({ open, setOpen, country }) {
+  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
   const [superCatVal, setSuperCatVal] = useState("");
   const [superCatError, setSuperCatError] = useState("");
   const [superCatLetterError, setSuperCatLetterError] = useState(false);
@@ -29,7 +31,6 @@ export default function AddSuperCategory({ open, setOpen, country }) {
   const { globalCsvState, setGlobalCsvState } = useContext(GlobalContext);
   const allSuperCategories = globalCsvState[country];
   const superCategories = Object.keys(allSuperCategories) ?? [];
-  // console.log('superCategories', superCategories);
 
   const handleClose = () => {
     setSuperCatVal("");
@@ -43,38 +44,34 @@ export default function AddSuperCategory({ open, setOpen, country }) {
       setSuperCatError("Required");
       return;
     }
-
     try {
-      const myArray = new Array(27);
-      myArray[0] = `${country}-${superCatVal.replace(/ /g, "-")}`;
-      myArray[1] = country;
-      myArray[2] = superCatVal;
-      myArray[23] = superCatValUrl;
-      const response = await fetch(`${baseUrl}/api/add-super-category`, {
+      const productId = `${country}-${superCatVal.replace(/ /g, "-")}`;
+      const sheetName = `${country.toLowerCase()}-${superCatVal.toLowerCase()}`;
+      fetch(`${API_KEY}?sheet=global-csv`, {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({newCsv:[
-          `${country.toLowerCase()}-${superCatVal.toLowerCase()}`,
-        ],
-        globalCsvData: myArray
-      }),
-      });
-
-      if (response.ok) {
-        // Request was successful
-        const data = await response.json();
-        const newState = { ...globalCsvState };
-        if(!newState[country][superCatVal]){
-          newState[country][superCatVal] = {}
-        }
-        setGlobalCsvState(newState);
-        handleClose();
-      } else {
-        // Handle error
-        console.error("Request failed with status:", response.status);
-      }
+        body: JSON.stringify({
+          data: [
+            {
+              country: country,
+              friendlyProductId: productId,
+              superCategory: superCatVal,
+              superCategoryUrl: superCatValUrl,
+            },
+          ],
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          handleClose();
+          const dataObj = globalCsvState;
+          dataObj[country][superCatVal] = {};
+          setGlobalCsvState(dataObj);
+          
+        });
     } catch (error) {
       // Handle network or other errors
       console.error("Error:", error);
@@ -169,7 +166,7 @@ export default function AddSuperCategory({ open, setOpen, country }) {
         <Button
           onClick={handleSubmit}
           className=""
-          sx={{ backgroundColor: "#001035" }}
+          sx={{ backgroundColor: "#001035", color: "#fff", }}
         >
           Add Super Category
         </Button>
