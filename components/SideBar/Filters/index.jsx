@@ -9,6 +9,7 @@ const Filters = () => {
     countryFilter,
     superCategoryFilter,
     setCategoryFilter,
+    categoryFilter,
     setCountryFilter,
     setSuperCategoryFilter,
   } = useContext(GlobalContext);
@@ -32,8 +33,11 @@ const Filters = () => {
           disablePortal
           id="combo-box-demo"
           options={countries}
+          value={countryFilter}
           onChange={(_, value) => {
             setCountryFilter(value);
+            setSuperCategoryFilter("");
+            setCategoryFilter("");
           }}
           sx={{ width: "auto" }}
           renderInput={(params) => <TextField {...params} label="Country" />}
@@ -44,8 +48,10 @@ const Filters = () => {
           options={superCategories}
           sx={{ width: 300 }}
           disabled={!countryFilter}
+          value={superCategoryFilter}
           onChange={(_, value) => {
             setSuperCategoryFilter(value);
+            setCategoryFilter("");
           }}
           renderInput={(params) => (
             <TextField {...params} label="Super Catergory" />
@@ -56,6 +62,7 @@ const Filters = () => {
           id="combo-box-demo"
           options={categories}
           disabled={!countryFilter || !superCategoryFilter}
+          value={categoryFilter}
           onChange={(_, value) => {
             setCategoryFilter(value);
           }}

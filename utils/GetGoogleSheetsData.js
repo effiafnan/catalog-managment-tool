@@ -9,7 +9,7 @@ export async function getGoogleSheetsData(range) {
 
       const opt = {
         spreadsheetId: "1Rb10dJKRNjPeHsWdm4JEZ89Hxh85kr6GH3_VT3tL_kg",
-        range : `${range}!A1:Z50`,
+        range : `${range}!A1:Z250`,
       };
 
       const response = await gsapi.spreadsheets.values.get(opt);

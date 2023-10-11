@@ -8,7 +8,7 @@ import {
 import GlobalContext from "../../context/GlobalContext";
 
 const columns = [
-  { field: "id", headerName: "friendlyProductId", width: 130 },
+  { field: "friendlyProductId", headerName: "friendlyProductId", width: 130 },
   { field: "country", headerName: "country", width: 130 },
   { field: "superCategory", headerName: "superCategory", width: 130 },
   { field: "categoryName", headerName: "categoryName", width: 130 },
@@ -20,16 +20,16 @@ const columns = [
   { field: "minutesForTest", headerName: "minutesForTest", width: 130 },
   { field: "validityFrom", headerName: "Validity From", width: 130 },
   { field: "validityUntil", headerName: "Validity Until", width: 130 },
-  { field: "attribute1", headerName: "1", width: 130 },
-  { field: "attribute2", headerName: "2", width: 130 },
-  { field: "attribute3", headerName: "3", width: 130 },
-  { field: "attribute4", headerName: "4", width: 130 },
-  { field: "attribute5", headerName: "5", width: 130 },
-  { field: "attribute6", headerName: "6", width: 130 },
-  { field: "attribute7", headerName: "7", width: 130 },
-  { field: "attribute8", headerName: "8", width: 130 },
-  { field: "attribute9", headerName: "9", width: 130 },
-  { field: "attribute11", headerName: "10", width: 130 },
+  { field: "1", headerName: "1", width: 130 },
+  { field: "2", headerName: "2", width: 130 },
+  { field: "3", headerName: "3", width: 130 },
+  { field: "4", headerName: "4", width: 130 },
+  { field: "5", headerName: "5", width: 130 },
+  { field: "6", headerName: "6", width: 130 },
+  { field: "7", headerName: "7", width: 130 },
+  { field: "8", headerName: "8", width: 130 },
+  { field: "9", headerName: "9", width: 130 },
+  { field: "10", headerName: "10", width: 130 },
   { field: "superCategoryUrl", headerName: "superCategoryUrl", width: 130 },
   { field: "categoryNameUrl", headerName: "categoryNameUrl", width: 130 },
   { field: "productNameUrl", headerName: "productNameUrl", width: 130 },
@@ -37,7 +37,19 @@ const columns = [
 ];
 
 export default function DataTable({ filterValue, searchQuery }) {
+  const API_KEY = "https://sheetdb.io/api/v1/819nekvayjt41";
   const [rows, setRows] = useState([]);
+  const [rowCount, setRowCount] = useState(0);
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: 50,
+  });
+
+  useEffect(() => {
+    setRowCount((prevRowCountState) =>
+      rowCount !== undefined ? rowCount : prevRowCountState
+    );
+  }, [rowCount, setRowCount]);
   const {
     globalCsvTableData,
     countryFilter,
@@ -46,60 +58,45 @@ export default function DataTable({ filterValue, searchQuery }) {
   } = React.useContext(GlobalContext);
 
   useEffect(() => {
-    setRows(globalCsvTableData);
-  }, [globalCsvTableData]);
+    setPaginationModel({ page: 0, pageSize: 50 });
+  }, [countryFilter, , superCategoryFilter, categoryFilter]);
 
-  // useEffect(() => {
-  //   if (searchQuery) {
-  //     const filteredRows = rows.filter((row) => {
-  //       return (
-  //         Object.values(row).some((value) => value?.toLowerCase() == searchQuery.toLowerCase())
-  //       );
-  //     });
-  //     setRows(filteredRows);
-  //   }else{
-  //     setRows(rows);
-  //   }
-  // }, [searchQuery, rows]);
+  useEffect(() => {
+    fetch(`${API_KEY}/count?sheet=global-csv`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data sheet count", data);
+        setRowCount(data?.rows ?? 0);
+      });
+  }, []);
+
+  useEffect(() => {
+    let queryString;
+    if (countryFilter) {
+      queryString = `${API_KEY}/search?country=${countryFilter}&sheet=global-csv`;
+      if (superCategoryFilter) {
+        queryString += `&superCategory=${superCategoryFilter}`;
+      }
+      if (categoryFilter) {
+        queryString += `&categoryName=${categoryFilter}`;
+      }
+    } else {
+      queryString = `${API_KEY}?sheet=global-csv&offset=${
+        paginationModel.page * paginationModel.pageSize
+      }&limit=${paginationModel.pageSize}`;
+    }
+    fetch(queryString)
+      .then((response) => response.json())
+      .then((data) => {
+        setRows(data);
+      });
+  }, [paginationModel, countryFilter, superCategoryFilter, categoryFilter]);
 
   const initfilterModel = {
     items: [{ field: "", operator: "contains", value: "" }],
   };
   const [filterModel, setFilterModel] = useState(initfilterModel);
 
-  useEffect(() => {
-    if (countryFilter && superCategoryFilter && categoryFilter) {
-      setFilterModel({
-        items: [
-          {
-            field: "categoryName",
-            operator: "contains",
-            value: categoryFilter,
-          },
-        ],
-      });
-    } else if (countryFilter && superCategoryFilter) {
-      setFilterModel({
-        items: [
-          {
-            field: "superCategory",
-            operator: "contains",
-            value: superCategoryFilter,
-          },
-        ],
-      });
-    } else if (countryFilter) {
-      setFilterModel({
-        items: [
-          { field: "country", operator: "contains", value: countryFilter },
-        ],
-      });
-    } else {
-      setFilterModel({
-        items: [{ field: "", operator: "contains", value: "" }],
-      });
-    }
-  }, [categoryFilter, superCategoryFilter, countryFilter]);
 
   useEffect(() => {
     if (
@@ -138,6 +135,9 @@ export default function DataTable({ filterValue, searchQuery }) {
         rows={rows}
         columns={columns}
         filterModel={filterModel}
+        getRowId={(row) => {
+          return row.friendlyProductId;
+        }}
         initialState={{
           filter: {
             filterModel: {
@@ -153,6 +153,10 @@ export default function DataTable({ filterValue, searchQuery }) {
         }}
         pageSizeOptions={[5, 10, 20, 50]}
         checkboxSelection
+        rowCount={rowCount}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
       />
     </div>
   );
