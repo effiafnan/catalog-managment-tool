@@ -1,6 +1,5 @@
 import { google } from "googleapis";
-const {GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY } = process.env;
-import keys from "../key.json"
+
 export async function getGoogleSheetsData(range) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -10,7 +9,7 @@ export async function getGoogleSheetsData(range) {
 
       const opt = {
         spreadsheetId: "1Rb10dJKRNjPeHsWdm4JEZ89Hxh85kr6GH3_VT3tL_kg",
-        range,
+        range : `${range}!A1:Z50`,
       };
 
       const response = await gsapi.spreadsheets.values.get(opt);
@@ -88,11 +87,14 @@ export async function updateGoogleSheetsData(newCsv, globalCsvData) {
 
 // Helper function to authenticate with Google Sheets API
 async function authorize() {
-  console.log("GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL", GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL);
+
+  const jwkBase64 = process.env.GOOGLE_SERVICE_ACCOUNT;
+  const jwk = JSON.parse(Buffer.from(jwkBase64, 'base64').toString());
+
   const client = new google.auth.JWT(
-    GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+    jwk.client_email,
     null,
-    GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
+    jwk.private_key,
     ["https://www.googleapis.com/auth/spreadsheets"]
   );
 
