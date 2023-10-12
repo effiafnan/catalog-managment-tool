@@ -25,8 +25,6 @@ const Categoriestem = ({ data, category, country, superCatergoy }) => {
         open={open}
         setOpen={setOpen}
         country={country}
-        superCategory={superCatergoy}
-        category={category}
       />
       <div>
         <li>

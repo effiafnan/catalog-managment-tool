@@ -2,6 +2,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import React, { useContext, useEffect, useState } from "react";
 import GlobalContext from "../../../context/GlobalContext";
+import AddProduct from "../../Modals/AddProduct";
 
 const Filters = () => {
   const {
@@ -14,6 +15,8 @@ const Filters = () => {
     setSuperCategoryFilter,
   } = useContext(GlobalContext);
 
+  const [open, setOpen] = useState(false);
+
   const countries = globalCsvState ? Object?.keys(globalCsvState) : [];
   const superCategories = countryFilter
     ? Object?.keys(globalCsvState[countryFilter])
@@ -24,6 +27,12 @@ const Filters = () => {
       : [];
 
   return (
+    <>
+    <AddProduct
+      open={open}
+      setOpen={setOpen}
+      country={countryFilter}
+    />
     <div className="flex flex-col">
       <div className="Filters text-neutral-800 text-lg font-bold font-['Open Sans'] leading-tight mb-4">
         Filters
@@ -71,6 +80,12 @@ const Filters = () => {
         />
         <button
           variant="outlined"
+          disabled={!countryFilter}
+          onClick={()=>{
+            if(countryFilter){
+              setOpen(true)
+            }
+          }}
           className="flex justify-between align-middle bg-transparent border rounded  border-solid border-gray-400 text-gray-700 hover:bg-gray-100 px-4 py-3 transition duration-150 text-base"
         >
           Add a Product
@@ -78,6 +93,7 @@ const Filters = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

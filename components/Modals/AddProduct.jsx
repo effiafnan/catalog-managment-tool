@@ -22,9 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function AddProduct({
   open,
   setOpen,
-  country,
-  superCategory,
-  category: cat,
+  country = ""
 }) {
   const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
   const [selectedSuperCategory, setSuperCategory] = useState("");
@@ -41,9 +39,9 @@ export default function AddProduct({
   const [productUrl, setProductUrl] = useState("");
   const [productUrlError, setProductUrlError] = useState("");
   const { globalCsvState, setGlobalCsvState } = useContext(GlobalContext);
-  const allSuperCategories = globalCsvState[country];
+  const allSuperCategories = globalCsvState[country] ?? {};
   const superCategories = Object.keys(allSuperCategories) ?? [];
-  const allCategories = globalCsvState[country][selectedSuperCategory] ?? {};
+  const allCategories = (selectedSuperCategory && country) ? globalCsvState[country][selectedSuperCategory] : {};
   const Categories = Object.keys(allCategories) ?? [];
 
   const handleClose = () => {
@@ -78,7 +76,7 @@ export default function AddProduct({
     if (!category) {
       setCategoryError("Required");
       return;
-    } else if (!superCategory) {
+    } else if (!selectedSuperCategory) {
       setSuperCategoryError("Required");
       return;
     } else if (!productName) {
