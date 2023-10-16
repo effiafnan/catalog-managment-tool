@@ -3,7 +3,7 @@ import { google } from "googleapis";
 export async function getGoogleSheetsData(range) {
   return new Promise(async (resolve, reject) => {
     try {
-      const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo?sheet=global-csv";
+      const API_KEY = "https://sheetdb.io/api/v1/227q74haya94r?sheet=global-csv";
       fetch(API_KEY)
         .then((response) => response.json())
         .then((data) => {

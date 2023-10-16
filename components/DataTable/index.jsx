@@ -37,7 +37,7 @@ const columns = [
 ];
 
 export default function DataTable({ filterValue, searchQuery }) {
-  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
+  const API_KEY = "https://sheetdb.io/api/v1/227q74haya94r";
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [paginationModel, setPaginationModel] = React.useState({

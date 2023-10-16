@@ -20,7 +20,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function AddCategory({ open, setOpen, country, superCategory }) {
-  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
+  const API_KEY = "https://sheetdb.io/api/v1/227q74haya94r";
   const [selectedSuperCategory, setSuperCategory] = useState("");
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState("");

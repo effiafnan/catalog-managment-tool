@@ -22,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function AddSuperCategory({ open, setOpen, country }) {
-  const API_KEY = "https://sheetdb.io/api/v1/dosvxtik6gowo";
+  const API_KEY = "https://sheetdb.io/api/v1/227q74haya94r";
   const [superCatVal, setSuperCatVal] = useState("");
   const [superCatError, setSuperCatError] = useState("");
   const [superCatLetterError, setSuperCatLetterError] = useState(false);
